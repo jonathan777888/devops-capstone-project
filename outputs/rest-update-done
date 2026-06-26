@@ -1,7 +1,7 @@
 curl -i -X PUT http://127.0.0.1:8080/accounts/1 -H "Content-Type: application/json" -d "{\"name\":\"John Updated\",\"email\":\"john.updated@example.com\",\"address\":\"456 New Street\"}"
 HTTP/1.1 200 OK
 Server: Werkzeug/2.2.3 Python/3.12.1
-Date: Fri, 26 Jun 2026 17:02:11 GMT
+Date: Fri, 26 Jun 2026 20:10:20 GMT
 Content-Type: application/json
 Content-Length: 93
 Permissions-Policy: browsing-topics=()
