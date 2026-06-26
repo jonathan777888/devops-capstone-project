@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: accounts-pipeline-run-
+spec:
+  pipelineRef:
+    name: accounts-pipeline
+  params:
+    - name: repo-url
+      value: https://github.com/jonathan777888/devops-capstone-project.git
+    - name: branch
+      value: main
+    - name: build-image
+      value: accounts:1
+    - name: app-name
+      value: accounts
+  workspaces:
+    - name: pipeline-workspace
+      emptyDir: {}

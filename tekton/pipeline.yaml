@@ -1,0 +1,70 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: accounts-pipeline
+spec:
+  params:
+    - name: repo-url
+      type: string
+    - name: branch
+      type: string
+    - name: build-image
+      type: string
+    - name: app-name
+      type: string
+  workspaces:
+    - name: pipeline-workspace
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: pipeline-workspace
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.branch)
+ 
+    - name: lint
+      taskRef:
+        name: flake8
+      runAfter:
+        - clone
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+ 
+    - name: tests
+      taskRef:
+        name: nose
+      runAfter:
+        - lint
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+ 
+    - name: build
+      taskRef:
+        name: buildah
+      runAfter:
+        - tests
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+      params:
+        - name: IMAGE
+          value: $(params.build-image)
+ 
+    - name: deploy
+      taskRef:
+        name: openshift-client
+      runAfter:
+        - build
+      params:
+        - name: SCRIPT
+          value: |
+            kubectl apply -f k8s/deployment.yaml
+            kubectl apply -f k8s/service.yaml
+            kubectl rollout status deployment/$(params.app-name)
