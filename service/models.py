@@ -4,7 +4,7 @@ class Account:
         self.name = name
         self.email = email
         self.address = address
- 
+
     def serialize(self):
         return {
             "id": self.id,
